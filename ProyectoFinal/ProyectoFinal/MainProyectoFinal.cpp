@@ -161,12 +161,13 @@ int main()
 
 	Model Piso((char*)"Models/Esfera/Piso.obj");
 	Model Esfera((char*)"Models/Esfera/Esfera.obj");
-	Model Box((char*)"Models/Box/Box.obj");
+	//Model Box((char*)"Models/Box/Box.obj");
 
 	Model Cajonera((char*)"Models/Cajonera/Cajonera.obj");
 	Model Table((char*)"Models/Table/table2.obj");
 	Model Ball((char*)"Models/Ball/pixarBall.obj");
 	Model Basket((char*)"Models/Basket/basket.obj");
+	Model BookCase((char*)"Models/Libros/BookCase.obj");
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -358,6 +359,12 @@ int main()
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Cajonera.Draw(lightingShader);
 
+		//Carga de modelo de Librero
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(13.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		BookCase.Draw(lightingShader);
 
 
 
