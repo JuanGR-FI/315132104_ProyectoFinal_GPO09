@@ -168,6 +168,7 @@ int main()
 	Model Ball((char*)"Models/Ball/pixarBall.obj");
 	Model Basket((char*)"Models/Basket/basket.obj");
 	Model BookCase((char*)"Models/Libros/BookCase.obj");
+	Model Caballete((char*)"Models/Caballete/Caballete.obj");
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -365,6 +366,13 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		BookCase.Draw(lightingShader);
+
+		//Carga de modelo de Caballete
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(7.0f, 0.0f, 10.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Caballete.Draw(lightingShader);
 
 
 
