@@ -27,6 +27,7 @@
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 void DoMovement();
+void animacionPelota();
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -41,6 +42,19 @@ bool firstMouse = true;
 // Light attributes
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 bool active;
+
+//Variables para animaciones
+float rotPuertaGarage = 0.0f;
+bool animGarage = false;
+float posPelota = 0.0f;
+bool animPelota = false;
+float escalaPelota = 1.0f;
+
+bool estado1 = true;
+bool estado2 = false;
+bool estado3 = false;
+bool estado4 = false;
+
 
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -170,6 +184,11 @@ int main()
 	Model BookCase((char*)"Models/Libros/BookCase.obj");
 	Model Caballete((char*)"Models/Caballete/Caballete.obj");
 	Model Silla((char*)"Models/Silla/Silla.obj");
+	Model Cama((char*)"Models/Cama/Cama.obj");
+	Model Fachada((char*)"Models/Fachada/Fachada.obj");
+	Model PuertaPrincipal((char*)"Models/Fachada/PuertaPrincipal.obj");
+	Model PuertaGarage((char*)"Models/Fachada/PuertaGarage.obj");
+
 
 
 	// First, set the container's VAO (and VBO)
@@ -205,6 +224,7 @@ int main()
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 		DoMovement();
+		animacionPelota();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -344,7 +364,9 @@ int main()
 
 		//Carga de modelo de Pelota
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(5.0f, 1.0f, -5.0f));
+		model = glm::translate(model, glm::vec3(5.0f, 1.5f, -5.0f));
+		model = glm::translate(model, glm::vec3(0.0f, posPelota , 0.0f));
+		model = glm::scale(model,glm::vec3(1.0f,escalaPelota,1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Ball.Draw(lightingShader);
@@ -383,6 +405,35 @@ int main()
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Silla.Draw(lightingShader);
 
+		//Carga de modelo de Cama
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Cama.Draw(lightingShader);
+
+		//Carga de modelo de Fachada
+		model = glm::mat4(1);
+		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Fachada.Draw(lightingShader);
+
+		//Carga de modelo de PuertaPrincipal
+		model = glm::mat4(1);
+		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PuertaPrincipal.Draw(lightingShader);
+
+		//Carga de modelo de PuertaGarage
+		model = glm::mat4(1);
+		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(1.0f,0.0f,0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PuertaGarage.Draw(lightingShader);
 
 
 
@@ -539,10 +590,63 @@ void DoMovement()
 		LightDirection.z += 0.1f;
 	}
 
+	if (animGarage) {
+		if (rotPuertaGarage < 90) {
+			rotPuertaGarage += 0.1f;
+		}
+	}
+	
+	if (keys[GLFW_KEY_B]) {
+		animPelota = true;
+	}
+	
 
 
 
+}
 
+void animacionPelota() {
+	if (animPelota) {
+		if (estado1) {
+			posPelota += 0.1f;
+			if (posPelota >  8) {
+				estado1 = false;
+				estado2 = true;
+			}
+			
+
+		}
+		if (estado2) {
+			posPelota -= 0.2f;
+			if (posPelota < 0) {
+				estado2 = false;
+				estado3 = true;
+			}
+				/*if (escalaPelota > 0.5) {
+					escalaPelota -= 0.1f;
+				}*/
+			
+		}
+		if (estado3) {
+			escalaPelota -= 0.1f;
+			if (escalaPelota < 0.2 ) {
+				estado3 = false;
+				estado4 = true;
+			}
+		}
+		if (estado4) {
+			posPelota += 0.1f;
+			if (escalaPelota < 1.0) {
+				escalaPelota += 0.1f;
+
+			}
+			if (posPelota > 8) {
+				estado4 = false;
+				estado2 = true;
+			}
+		}
+
+	}
 }
 
 // Is called whenever a key is pressed/released via GLFW
@@ -597,6 +701,12 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 			Light4 = glm::vec3(0);
 		}
 	}
+
+	if (keys[GLFW_KEY_G]) {
+		animGarage = true;
+	}
+
+	
 }
 
 void MouseCallback(GLFWwindow* window, double xPos, double yPos)
