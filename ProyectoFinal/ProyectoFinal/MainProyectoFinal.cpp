@@ -28,6 +28,8 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 void DoMovement();
 void animacionPelota();
+void animacionGarage();
+
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -45,15 +47,23 @@ bool active;
 
 //Variables para animaciones
 float rotPuertaGarage = 0.0f;
+float posPuertaGarage = 0.0f;
 bool animGarage = false;
+float rotPuertaPrincipal = 0.0f;
+bool animPuerta = false;
 float posPelota = 0.0f;
 bool animPelota = false;
 float escalaPelota = 1.0f;
+float rotVentilador = 0.0f;
+bool animVentilador = false;
 
-bool estado1 = true;
-bool estado2 = false;
-bool estado3 = false;
-bool estado4 = false;
+bool estadoPelota1 = true;
+bool estadoPelota2 = false;
+bool estadoPelota3 = false;
+bool estadoPelota4 = false;
+
+bool estadoGarage1 = true;
+bool estadoGarage2 = false;
 
 
 // Positions of the point lights
@@ -135,7 +145,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Iluminacion 2", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Proyecto Final", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -188,6 +198,11 @@ int main()
 	Model Fachada((char*)"Models/Fachada/Fachada.obj");
 	Model PuertaPrincipal((char*)"Models/Fachada/PuertaPrincipal.obj");
 	Model PuertaGarage((char*)"Models/Fachada/PuertaGarage.obj");
+	Model BaseVentilador((char*)"Models/Ventilador/BaseVentilador.obj");
+	Model Ventilador((char*)"Models/Ventilador/Ventilador.obj");
+	Model Carroseria((char*)"Models/Car/Carroseria.obj");
+	Model LLanta((char*)"Models/Car/Wheel.obj");
+
 
 
 
@@ -225,6 +240,7 @@ int main()
 		glfwPollEvents();
 		DoMovement();
 		animacionPelota();
+		animacionGarage();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -373,7 +389,8 @@ int main()
 
 		//Carga de modelo de Canasta de Juguetes
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(8.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(1.0f, 0.5f, -7.0f));
+		model = glm::rotate(model, glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Basket.Draw(lightingShader);
@@ -394,15 +411,24 @@ int main()
 
 		//Carga de modelo de Caballete
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(7.0f, 0.0f, 10.0f));
+		model = glm::translate(model, glm::vec3(17.0f, 0.0f, 5.0f));
+		model = glm::rotate(model, glm::radians(210.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Caballete.Draw(lightingShader);
 
 		//Carga de modelo de Silla 1
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Silla.Draw(lightingShader);
+
+		//Carga de modelo de Silla 2
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(0.5f, 0.5f, 3.5f));
+		model = glm::rotate(model, glm::radians(60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Silla.Draw(lightingShader);
@@ -423,19 +449,97 @@ int main()
 
 		//Carga de modelo de PuertaPrincipal
 		model = glm::mat4(1);
-		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
-		model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(7.145f, 3.8f, 15.0f));
+		model = glm::rotate(model, glm::radians(-rotPuertaPrincipal), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		PuertaPrincipal.Draw(lightingShader);
 
 		//Carga de modelo de PuertaGarage
 		model = glm::mat4(1);
-		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		model = glm::translate(model, glm::vec3(-17.0f, 9.0f, 7.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posPuertaGarage));
 		model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(1.0f,0.0f,0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		PuertaGarage.Draw(lightingShader);
+
+		//Carga de modelo de BaseVentilador
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(7.0f, 15.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		BaseVentilador.Draw(lightingShader);
+
+		//Carga de modelo de Ventilador
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(7.0f, 15.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-rotVentilador), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Ventilador.Draw(lightingShader);
+
+		//Carroceria
+		view = camera.GetViewMatrix();
+		model = glm::mat4(1);
+		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
+		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
+		model = glm::translate(model, glm::vec3(-17.0f, 0.0f, 23.0f));
+		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform4f(glGetUniformLocation(lightingShader.Program, "colorAlpha"), 1.0, 1.0, 1.0, 0.75);
+		Carroseria.Draw(lightingShader);
+
+		//Llanta Delantera Der
+		view = camera.GetViewMatrix();
+		model = glm::mat4(1);
+		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
+		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
+		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 26.9f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		LLanta.Draw(lightingShader);
+
+		//Llanta Trasera Der
+		view = camera.GetViewMatrix();
+		model = glm::mat4(1);
+		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
+		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
+		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 18.7f));
+		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		LLanta.Draw(lightingShader);
+
+
+		//Llanta Delantera Izq
+		view = camera.GetViewMatrix();
+		model = glm::mat4(1);
+		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
+		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
+		//////model = glm::translate(model, glm::vec3(-1.7f, 0.8f, 2.6f));
+		//////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
+		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 26.9f));
+		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		LLanta.Draw(lightingShader);
+
+		//Llanta Trasera Izq
+		view = camera.GetViewMatrix();
+		model = glm::mat4(1);
+		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
+		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
+		////model = glm::translate(model, glm::vec3(-1.7f, 0.8f, -2.9f));
+		////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
+		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 18.7f));
+		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		LLanta.Draw(lightingShader);
+
+
 
 
 
@@ -592,14 +696,27 @@ void DoMovement()
 		LightDirection.z += 0.1f;
 	}
 
-	if (animGarage) {
-		if (rotPuertaGarage < 90) {
-			rotPuertaGarage += 0.1f;
+	if (animPuerta) {
+		if (rotPuertaPrincipal < 90) {
+			rotPuertaPrincipal += 0.5f;
 		}
 	}
 	
 	if (keys[GLFW_KEY_B]) {
 		animPelota = true;
+	}
+
+	if (keys[GLFW_KEY_G]) {
+		animGarage = true;
+	}
+
+	if (animVentilador) {
+		rotVentilador += 1.0f;
+		if (rotVentilador > 360) {
+			rotVentilador = 0.0f;
+			animVentilador = false;
+		}
+			
 	}
 	
 
@@ -609,45 +726,61 @@ void DoMovement()
 
 void animacionPelota() {
 	if (animPelota) {
-		if (estado1) {
+		if (estadoPelota1) {
 			posPelota += 0.1f;
 			if (posPelota >  6) {
-				estado1 = false;
-				estado2 = true;
+				estadoPelota1 = false;
+				estadoPelota2 = true;
 			}
 			
-
 		}
-		if (estado2) {
+		if (estadoPelota2) {
 			posPelota -= 0.2f;
 			if (posPelota < 0) {
-				estado2 = false;
-				estado3 = true;
+				estadoPelota2 = false;
+				estadoPelota3 = true;
 			}
-				/*if (escalaPelota > 0.5) {
-					escalaPelota -= 0.1f;
-				}*/
-			
+		
 		}
-		if (estado3) {
+		if (estadoPelota3) {
 			escalaPelota -= 0.1f;
 			if (escalaPelota < 0.2 ) {
-				estado3 = false;
-				estado4 = true;
+				estadoPelota3 = false;
+				estadoPelota4 = true;
 			}
 		}
-		if (estado4) {
+		if (estadoPelota4) {
 			posPelota += 0.1f;
 			if (escalaPelota < 1.0) {
 				escalaPelota += 0.1f;
 
 			}
 			if (posPelota > 6) {
-				estado4 = false;
-				estado2 = true;
+				estadoPelota4 = false;
+				estadoPelota2 = true;
 			}
 		}
 
+	}
+}
+
+void animacionGarage() {
+	if (animGarage) {
+		if (estadoGarage1) {
+			rotPuertaGarage += 0.3f;
+			if (rotPuertaGarage > 90) {
+				estadoGarage1 = false;
+				estadoGarage2 = true;
+			}
+		}
+		if (estadoGarage2) {
+			posPuertaGarage += 0.1f;
+			if (posPuertaGarage > 9) {
+				estadoGarage2 = false;
+			}
+		}
+		
+		
 	}
 }
 
@@ -704,8 +837,12 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		}
 	}
 
-	if (keys[GLFW_KEY_G]) {
-		animGarage = true;
+	if (keys[GLFW_KEY_P]) {
+		animPuerta = true;
+	}
+
+	if (keys[GLFW_KEY_V]) {
+		animVentilador = true;
 	}
 
 	
