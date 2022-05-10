@@ -355,7 +355,7 @@ int main()
 
 		//Carga de modelo de Mesa
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.5f, 2.0f));
 		model = glm::scale(model,glm::vec3(2.0f, 2.0f, 2.0f));
 		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -364,7 +364,7 @@ int main()
 
 		//Carga de modelo de Pelota
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(5.0f, 1.5f, -5.0f));
+		model = glm::translate(model, glm::vec3(12.0f, 1.5f, 7.0f));
 		model = glm::translate(model, glm::vec3(0.0f, posPelota , 0.0f));
 		model = glm::scale(model,glm::vec3(1.0f,escalaPelota,1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -380,13 +380,14 @@ int main()
 
 		//Carga de modelo de Cajonera
 		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 13.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Cajonera.Draw(lightingShader);
 
 		//Carga de modelo de Librero
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(13.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(21.0f, 0.5f, -4.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		BookCase.Draw(lightingShader);
@@ -400,14 +401,15 @@ int main()
 
 		//Carga de modelo de Silla 1
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(7.0f, 0.0f, 5.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Silla.Draw(lightingShader);
 
 		//Carga de modelo de Cama
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
+		model = glm::translate(model, glm::vec3(10.0f, 0.0f, -8.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Cama.Draw(lightingShader);
@@ -609,7 +611,7 @@ void animacionPelota() {
 	if (animPelota) {
 		if (estado1) {
 			posPelota += 0.1f;
-			if (posPelota >  8) {
+			if (posPelota >  6) {
 				estado1 = false;
 				estado2 = true;
 			}
@@ -640,7 +642,7 @@ void animacionPelota() {
 				escalaPelota += 0.1f;
 
 			}
-			if (posPelota > 8) {
+			if (posPelota > 6) {
 				estado4 = false;
 				estado2 = true;
 			}
