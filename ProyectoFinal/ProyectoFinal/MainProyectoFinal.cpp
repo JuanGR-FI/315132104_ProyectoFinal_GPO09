@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 
+
 // GLEW
 #include <GL/glew.h>
 
@@ -29,6 +30,7 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 void DoMovement();
 void animacionPelota();
 void animacionGarage();
+void animacionPerro();
 
 
 // Window dimensions
@@ -36,7 +38,9 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//Camera  camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera  camera(glm::vec3(7.0f, 15.0f, 70.0f));
+
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -49,6 +53,7 @@ bool active;
 float rotPuertaGarage = 0.0f;
 float posPuertaGarage = 0.0f;
 bool animGarage = false;
+float posCoche = 0.0f;
 float rotPuertaPrincipal = 0.0f;
 bool animPuerta = false;
 float posPelota = 0.0f;
@@ -56,6 +61,9 @@ bool animPelota = false;
 float escalaPelota = 1.0f;
 float rotVentilador = 0.0f;
 bool animVentilador = false;
+float posPerro = 0.0f;
+float rotPerro = 0.0f;
+bool animPerro = false;
 
 bool estadoPelota1 = true;
 bool estadoPelota2 = false;
@@ -64,6 +72,14 @@ bool estadoPelota4 = false;
 
 bool estadoGarage1 = true;
 bool estadoGarage2 = false;
+bool estadoGarage3 = false;
+bool estadoGarage4 = false;
+bool estadoGarage5 = false;
+
+bool estadoPerro1 = true;
+bool estadoPerro2 = false;
+bool estadoPerro3 = false;
+
 
 
 // Positions of the point lights
@@ -164,7 +180,7 @@ int main()
 	glfwSetCursorPosCallback(window, MouseCallback);
 
 	// GLFW Options
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
 	glewExperimental = GL_TRUE;
@@ -202,6 +218,8 @@ int main()
 	Model Ventilador((char*)"Models/Ventilador/Ventilador.obj");
 	Model Carroseria((char*)"Models/Car/Carroseria.obj");
 	Model LLanta((char*)"Models/Car/Wheel.obj");
+	Model Perro((char*)"Models/Dog/Doguinho.obj");
+
 
 
 
@@ -241,6 +259,7 @@ int main()
 		DoMovement();
 		animacionPelota();
 		animacionGarage();
+		animacionPerro();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -435,7 +454,7 @@ int main()
 
 		//Carga de modelo de Cama
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(10.0f, 0.0f, -8.0f));
+		model = glm::translate(model, glm::vec3(10.0f, 0.5f, -8.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Cama.Draw(lightingShader);
@@ -487,6 +506,7 @@ int main()
 		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
 		model = glm::translate(model, glm::vec3(-17.0f, 0.0f, 23.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform4f(glGetUniformLocation(lightingShader.Program, "colorAlpha"), 1.0, 1.0, 1.0, 0.75);
 		Carroseria.Draw(lightingShader);
@@ -499,6 +519,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 26.9f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posCoche));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		LLanta.Draw(lightingShader);
 
@@ -508,7 +529,9 @@ int main()
 		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
 		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
 		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 18.7f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posCoche));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		LLanta.Draw(lightingShader);
 
@@ -523,6 +546,7 @@ int main()
 		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 26.9f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		LLanta.Draw(lightingShader);
 
@@ -536,10 +560,18 @@ int main()
 		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 18.7f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		LLanta.Draw(lightingShader);
 
-
+		//Carga de modelo de Perro
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
+		model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Perro.Draw(lightingShader);
 
 
 
@@ -710,6 +742,10 @@ void DoMovement()
 		animGarage = true;
 	}
 
+	if (keys[GLFW_KEY_T]) {
+		animPerro = true;
+	}
+
 	if (animVentilador) {
 		rotVentilador += 1.0f;
 		if (rotVentilador > 360) {
@@ -777,10 +813,67 @@ void animacionGarage() {
 			posPuertaGarage += 0.1f;
 			if (posPuertaGarage > 9) {
 				estadoGarage2 = false;
+				estadoGarage3 = true;
+			}
+		}
+		if (estadoGarage3) {
+			posCoche += 2.0f;
+			if (posCoche > 800) {
+				estadoGarage3 = false;
+				estadoGarage4 = true;
+			}
+		}
+		if (estadoGarage4) {
+			posPuertaGarage -= 0.1f;
+			if (posPuertaGarage < 0) {
+				estadoGarage4 = false;
+				estadoGarage5 = true;
+			}
+		}
+		if (estadoGarage5) {
+			rotPuertaGarage -= 0.3f;
+			if (rotPuertaGarage < 0) {
+				estadoGarage5 = false;
+				
 			}
 		}
 		
 		
+	}
+}
+
+void animacionPerro() {
+	if (animPerro) {
+		if (estadoPerro1) {
+			posPerro += 0.1f;
+			if (posPerro > 20) {
+				estadoPerro1 = false;
+				estadoPerro2 = true;
+				
+			}
+		}
+		if (estadoPerro2) {
+			rotPerro = 180.0f;
+			
+			posPerro -= 0.1f;
+			if (posPerro < 0) {
+				estadoPerro2 = false;
+				estadoPerro3 = true;
+				//estadoTriciclo3 = true;
+				//rotTriciclo = 0.0f;
+				//posTriciclo = 0.0f;
+
+			}
+		}
+
+		if (estadoPerro3) {
+			rotPerro = 0.0f;
+			posPerro = 0.0f;
+			estadoPerro3 = false;
+			estadoPerro1 = true;
+			animPerro = false;
+
+		}
 	}
 }
 
