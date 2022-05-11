@@ -1,0 +1,5 @@
+﻿C:\Users\Seinos\Desktop\t$m$p$$$\Drawing Board.max
+C:\Users\Seinos\Desktop\t$m$p$$$\MAXFILES.TXT
+F:\3DSMax For Sale\DrawingBoard\Textures\RedWood.jpg
+F:\3DSMax For Sale\DrawingBoard\Textures\WhiteTable.jpg
+F:\3DSMax For Sale\DrawingBoard\Textures\WoodenPlankSmall.jpg
