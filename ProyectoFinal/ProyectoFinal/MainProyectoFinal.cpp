@@ -24,7 +24,7 @@
 #include "Camera.h"
 #include "Model.h"
 
-// Function prototypes
+// Prototipo de funciones
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 void DoMovement();
@@ -49,7 +49,7 @@ bool firstMouse = true;
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 bool active;
 
-//Variables para animaciones
+//Variables de posiciones y rotaciones para animaciones
 float rotPuertaGarage = 0.0f;
 float posPuertaGarage = 0.0f;
 bool animGarage = false;
@@ -65,6 +65,7 @@ float posPerro = 0.0f;
 float rotPerro = 0.0f;
 bool animPerro = false;
 
+//Variables de estado para las animaciones
 bool estadoPelota1 = true;
 bool estadoPelota2 = false;
 bool estadoPelota3 = false;
@@ -79,8 +80,6 @@ bool estadoGarage5 = false;
 bool estadoPerro1 = true;
 bool estadoPerro2 = false;
 bool estadoPerro3 = false;
-
-
 
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -201,7 +200,6 @@ int main()
 
 	Model Piso((char*)"Models/Esfera/Piso.obj");
 	Model Esfera((char*)"Models/Esfera/Esfera.obj");
-	//Model Box((char*)"Models/Box/Box.obj");
 
 	Model Cajonera((char*)"Models/Cajonera/Cajonera.obj");
 	Model Table((char*)"Models/Table/table2.obj");
@@ -219,10 +217,6 @@ int main()
 	Model Carroseria((char*)"Models/Car/Carroseria.obj");
 	Model LLanta((char*)"Models/Car/Wheel.obj");
 	Model Perro((char*)"Models/Dog/Doguinho.obj");
-
-
-
-
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -268,10 +262,7 @@ int main()
 		// OpenGL options
 		glEnable(GL_DEPTH_TEST);
 
-
-
 		//Load Model
-
 
 		// Use cooresponding shader when setting uniforms/drawing objects
 		lightingShader.Use();
@@ -319,8 +310,6 @@ int main()
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].quadratic"), 0.20f);
 
-
-
 		// Point light 2
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].ambient"), lightColor2.x, lightColor2.y, lightColor2.z);
@@ -361,7 +350,7 @@ int main()
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
 
 		// Set material properties
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 32.0f);////////////////////////////////////////////
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 32.0f);
 
 		// Create camera transformations
 		glm::mat4 view;
@@ -379,8 +368,6 @@ int main()
 
 		glm::mat4 model(1);
 
-
-
 		//Carga de modelo de Piso
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
@@ -392,7 +379,6 @@ int main()
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(0.0f, 0.5f, 2.0f));
 		model = glm::scale(model,glm::vec3(2.0f, 2.0f, 2.0f));
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Table.Draw(lightingShader);
@@ -419,7 +405,6 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 13.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
-		//glUniform4f(glGetUniformLocation(lightingShader.Program, "colorAlpha"), 1.0, 1.0, 1.0, 1.0);
 		Cajonera.Draw(lightingShader);
 
 		//Carga de modelo de Librero
@@ -462,7 +447,6 @@ int main()
 
 		//Carga de modelo de Fachada
 		model = glm::mat4(1);
-		//model = glm::translate(model, glm::vec3(7.0f, 0.0f, 20.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Fachada.Draw(lightingShader);
@@ -487,7 +471,6 @@ int main()
 		//Carga de modelo de BaseVentilador
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(7.0f, 15.0f, 0.0f));
-		//model = glm::rotate(model, glm::radians(-rotPuertaGarage), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		BaseVentilador.Draw(lightingShader);
@@ -503,8 +486,6 @@ int main()
 		//Carroceria
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
-		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
-		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
 		model = glm::translate(model, glm::vec3(-17.0f, 0.0f, 23.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
@@ -515,8 +496,6 @@ int main()
 		//Llanta Delantera Der
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
-		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
-		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
 		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 26.9f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
@@ -527,8 +506,6 @@ int main()
 		//Llanta Trasera Der
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
-		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
-		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
 		model = glm::translate(model, glm::vec3(-19.5f, 1.0f, 18.7f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
@@ -540,11 +517,6 @@ int main()
 		//Llanta Delantera Izq
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
-		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
-		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
-		//////model = glm::translate(model, glm::vec3(-1.7f, 0.8f, 2.6f));
-		//////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
-		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 26.9f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
@@ -554,11 +526,6 @@ int main()
 		//Llanta Trasera Izq
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
-		//model = glm::translate(model, PosIni + glm::vec3(movKitX, 0, movKitZ));
-		//model = glm::rotate(model, glm::radians(rotKit), glm::vec3(0.0f, 1.0f, 0.0));
-		////model = glm::translate(model, glm::vec3(-1.7f, 0.8f, -2.9f));
-		////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
-		//model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
 		model = glm::translate(model, glm::vec3(-14.5f, 1.0f, 18.7f));
 		model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -posCoche));
@@ -661,73 +628,6 @@ void DoMovement()
 
 
 	}
-
-	/*if (keys[GLFW_KEY_T])
-	{
-		pointLightPositions[0].x += 0.01f;
-	}
-	if (keys[GLFW_KEY_G])
-	{
-		pointLightPositions[0].x -= 0.01f;
-	}
-
-	if (keys[GLFW_KEY_Y])
-	{
-		pointLightPositions[0].y += 0.01f;
-	}
-
-	if (keys[GLFW_KEY_H])
-	{
-		pointLightPositions[0].y -= 0.01f;
-	}
-	if (keys[GLFW_KEY_U])
-	{
-		pointLightPositions[0].z -= 0.1f;
-	}
-	if (keys[GLFW_KEY_J])
-	{
-		pointLightPositions[0].z += 0.01f;
-	}*/
-
-	//Movimiento posicion spotlight
-	/*if (keys[GLFW_KEY_E]) {
-		LightPosition.x -= 0.1f;
-	}
-	if (keys[GLFW_KEY_R]) {
-		LightPosition.x += 0.1f;
-	}
-	if (keys[GLFW_KEY_F]) {
-		LightPosition.y += 0.1f;
-	}
-	if (keys[GLFW_KEY_V]) {
-		LightPosition.y -= 0.1f;
-	}
-	if (keys[GLFW_KEY_G]) {
-		LightPosition.z -= 0.1f;
-	}
-	if (keys[GLFW_KEY_B]) {
-		LightPosition.z += 0.1f;
-	}*/
-
-	//Direccion spotlight
-	/*if (keys[GLFW_KEY_Y]) {
-		LightDirection.x -= 0.1f;
-	}
-	if (keys[GLFW_KEY_U]) {
-		LightDirection.x += 0.1f;
-	}
-	if (keys[GLFW_KEY_I]) {
-		LightDirection.y += 0.1f;
-	}
-	if (keys[GLFW_KEY_K]) {
-		LightDirection.y -= 0.1f;
-	}
-	if (keys[GLFW_KEY_O]) {
-		LightDirection.z -= 0.1f;
-	}
-	if (keys[GLFW_KEY_L]) {
-		LightDirection.z += 0.1f;
-	}*/
 
 	if (animPuerta) {
 		if (rotPuertaPrincipal < 90) {
@@ -893,39 +793,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 			keys[key] = false;
 		}
 	}
-
-	/*if (keys[GLFW_KEY_SPACE])
-	{
-		//active = !active;
-		if (active)
-		{
-			//Para la esfera del dragon 1
-			Light1 = glm::vec3(1.0f, 1.0f, 0.0f);
-
-			//Para la esfera del dragon 2
-			Light2 = glm::vec3(1.0f, 0.0f, 1.0f);
-
-			//Para la esfera del dragon 3
-			Light3 = glm::vec3(0.0f, 1.0f, 1.0f);
-
-			//Para la esfera del dragon 4
-			Light4 = glm::vec3(0.10f, 0.25f, 0.70f);
-		}
-		else
-		{
-			//Para la esfera del dragon 1
-			Light1 = glm::vec3(0);//Cuado es solo un valor en los 3 vectores pueden dejar solo una componente
-
-			//Para la esfera del dragon 2
-			Light2 = glm::vec3(0);
-
-			//Para la esfera del dragon 3
-			Light3 = glm::vec3(0);
-
-			//Para la esfera del dragon 4
-			Light4 = glm::vec3(0);
-		}
-	}*/
 
 	if (keys[GLFW_KEY_P]) {
 		animPuerta = true;
