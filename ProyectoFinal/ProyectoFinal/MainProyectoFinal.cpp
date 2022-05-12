@@ -314,7 +314,7 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].ambient"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].diffuse"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].specular"), 1.0f, 1.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].quadratic"), 0.20f);
@@ -325,7 +325,7 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].ambient"), lightColor2.x, lightColor2.y, lightColor2.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].diffuse"), lightColor2.x, lightColor2.y, lightColor2.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].specular"), 1.0f, 1.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].quadratic"), 0.20f);
@@ -334,7 +334,7 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].ambient"), lightColor3.x, lightColor3.y, lightColor3.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].diffuse"), lightColor3.x, lightColor3.y, lightColor3.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].specular"), 1.0f, 1.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].quadratic"), 0.20f);
@@ -343,7 +343,7 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].ambient"), lightColor4.x, lightColor4.y, lightColor4.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].diffuse"), lightColor4.x, lightColor4.y, lightColor4.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].specular"), 1.0f, 1.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].specular"), 1.0f, 1.0f, 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].quadratic"), 0.20f);
@@ -361,7 +361,7 @@ int main()
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
 
 		// Set material properties
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 16.0f);
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 32.0f);////////////////////////////////////////////
 
 		// Create camera transformations
 		glm::mat4 view;
@@ -419,6 +419,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 13.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		//glUniform4f(glGetUniformLocation(lightingShader.Program, "colorAlpha"), 1.0, 1.0, 1.0, 1.0);
 		Cajonera.Draw(lightingShader);
 
 		//Carga de modelo de Librero
@@ -629,34 +630,34 @@ int main()
 	return 0;
 }
 
-// Moves/alters the camera positions based on user input
+// Mueve la posición de la cámara y las animaciones dependiendo de las entradas del usuario
 void DoMovement()
 {
 
 	// Camera controls
 	if (keys[GLFW_KEY_W] || keys[GLFW_KEY_UP])
 	{
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		camera.ProcessKeyboard(FORWARD, deltaTime+0.05);
 
 	}
 
 	if (keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN])
 	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		camera.ProcessKeyboard(BACKWARD, deltaTime+0.05);
 
 
 	}
 
 	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
 	{
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		camera.ProcessKeyboard(LEFT, deltaTime+0.05);
 
 
 	}
 
 	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
 	{
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		camera.ProcessKeyboard(RIGHT, deltaTime+0.05);
 
 
 	}
@@ -689,7 +690,7 @@ void DoMovement()
 	}*/
 
 	//Movimiento posicion spotlight
-	if (keys[GLFW_KEY_E]) {
+	/*if (keys[GLFW_KEY_E]) {
 		LightPosition.x -= 0.1f;
 	}
 	if (keys[GLFW_KEY_R]) {
@@ -706,10 +707,10 @@ void DoMovement()
 	}
 	if (keys[GLFW_KEY_B]) {
 		LightPosition.z += 0.1f;
-	}
+	}*/
 
 	//Direccion spotlight
-	if (keys[GLFW_KEY_Y]) {
+	/*if (keys[GLFW_KEY_Y]) {
 		LightDirection.x -= 0.1f;
 	}
 	if (keys[GLFW_KEY_U]) {
@@ -726,7 +727,7 @@ void DoMovement()
 	}
 	if (keys[GLFW_KEY_L]) {
 		LightDirection.z += 0.1f;
-	}
+	}*/
 
 	if (animPuerta) {
 		if (rotPuertaPrincipal < 90) {
@@ -751,47 +752,43 @@ void DoMovement()
 		if (rotVentilador > 360) {
 			rotVentilador = 0.0f;
 			animVentilador = false;
-		}
-			
+		}		
 	}
-	
-
-
-
 }
 
+//La función realiza la lógica de la animación de la pelota
 void animacionPelota() {
-	if (animPelota) {
-		if (estadoPelota1) {
+	if (animPelota) {//Si se activa la animación
+		if (estadoPelota1) {//Estado1 Mover pelota hacia arriba
 			posPelota += 0.1f;
-			if (posPelota >  6) {
+			if (posPelota >  6) {//Cambiar de estado
 				estadoPelota1 = false;
 				estadoPelota2 = true;
 			}
 			
 		}
-		if (estadoPelota2) {
+		if (estadoPelota2) {//Estado2 Mover pelota hacia abajo
 			posPelota -= 0.2f;
-			if (posPelota < 0) {
+			if (posPelota < 0) {//Cambiar de estado
 				estadoPelota2 = false;
 				estadoPelota3 = true;
 			}
 		
 		}
-		if (estadoPelota3) {
+		if (estadoPelota3) {//Estado3 Escalar lapelota en el eje Y para que parezca más pequeña
 			escalaPelota -= 0.1f;
-			if (escalaPelota < 0.2 ) {
+			if (escalaPelota < 0.2 ) {//Cambio de estado
 				estadoPelota3 = false;
 				estadoPelota4 = true;
 			}
 		}
-		if (estadoPelota4) {
+		if (estadoPelota4) {//Estado4 Mover pelota hacia arriba
 			posPelota += 0.1f;
-			if (escalaPelota < 1.0) {
+			if (escalaPelota < 1.0) {//Escalar la pelota a la escala original
 				escalaPelota += 0.1f;
 
 			}
-			if (posPelota > 6) {
+			if (posPelota > 6) {//Cambiar de estado
 				estadoPelota4 = false;
 				estadoPelota2 = true;
 			}
@@ -800,39 +797,40 @@ void animacionPelota() {
 	}
 }
 
+//La función realiza la lógica de la animación del garage
 void animacionGarage() {
-	if (animGarage) {
-		if (estadoGarage1) {
+	if (animGarage) {//Si se activa la animación
+		if (estadoGarage1) {//Estado1 Rotar puerta
 			rotPuertaGarage += 0.3f;
-			if (rotPuertaGarage > 90) {
+			if (rotPuertaGarage > 90) {//Cambiar de estado
 				estadoGarage1 = false;
 				estadoGarage2 = true;
 			}
 		}
-		if (estadoGarage2) {
+		if (estadoGarage2) {//Estado2 Mover puerta adentro del garage
 			posPuertaGarage += 0.1f;
-			if (posPuertaGarage > 9) {
+			if (posPuertaGarage > 9) {//Cambiar de estado
 				estadoGarage2 = false;
 				estadoGarage3 = true;
 			}
 		}
-		if (estadoGarage3) {
+		if (estadoGarage3) {//Estado3 Mover el coche adentro del garage
 			posCoche += 2.0f;
-			if (posCoche > 800) {
+			if (posCoche > 800) {//Cambiar de estado
 				estadoGarage3 = false;
 				estadoGarage4 = true;
 			}
 		}
-		if (estadoGarage4) {
+		if (estadoGarage4) {//Estado4 Sacar la puerta del garage
 			posPuertaGarage -= 0.1f;
-			if (posPuertaGarage < 0) {
+			if (posPuertaGarage < 0) {//Cambiar de estado
 				estadoGarage4 = false;
 				estadoGarage5 = true;
 			}
 		}
-		if (estadoGarage5) {
+		if (estadoGarage5) {//Estado5 Rotar puerta para cerrarla
 			rotPuertaGarage -= 0.3f;
-			if (rotPuertaGarage < 0) {
+			if (rotPuertaGarage < 0) {//Terminación de la animación
 				estadoGarage5 = false;
 				
 			}
@@ -842,31 +840,30 @@ void animacionGarage() {
 	}
 }
 
+//La función realiza la lógica de la animación del movimiento del perro
 void animacionPerro() {
-	if (animPerro) {
-		if (estadoPerro1) {
+
+	if (animPerro) { //Si se activa la animación
+		if (estadoPerro1) {//Estado1 Mover al perro hacia adelante
 			posPerro += 0.1f;
-			if (posPerro > 20) {
+			if (posPerro > 20) {//Cambiar al siguiente estado
 				estadoPerro1 = false;
 				estadoPerro2 = true;
 				
 			}
 		}
-		if (estadoPerro2) {
+		if (estadoPerro2) {//Estado2 Rotar al perro para ver en sentido contrario y seguir moviéndose
 			rotPerro = 180.0f;
 			
 			posPerro -= 0.1f;
-			if (posPerro < 0) {
+			if (posPerro < 0) {//Cambio de estado
 				estadoPerro2 = false;
 				estadoPerro3 = true;
-				//estadoTriciclo3 = true;
-				//rotTriciclo = 0.0f;
-				//posTriciclo = 0.0f;
 
 			}
 		}
 
-		if (estadoPerro3) {
+		if (estadoPerro3) {//Estado3 Colocar al perro en la posisción inicial
 			rotPerro = 0.0f;
 			posPerro = 0.0f;
 			estadoPerro3 = false;
@@ -877,7 +874,7 @@ void animacionPerro() {
 	}
 }
 
-// Is called whenever a key is pressed/released via GLFW
+// La función se manda a llamar cada vez que se presiona una tecla mediante GLFW
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
@@ -897,7 +894,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		}
 	}
 
-	if (keys[GLFW_KEY_SPACE])
+	/*if (keys[GLFW_KEY_SPACE])
 	{
 		//active = !active;
 		if (active)
@@ -928,7 +925,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 			//Para la esfera del dragon 4
 			Light4 = glm::vec3(0);
 		}
-	}
+	}*/
 
 	if (keys[GLFW_KEY_P]) {
 		animPuerta = true;
@@ -941,6 +938,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 	
 }
 
+//La función recibe todas las entradas del mouse (Posición en X y Y)
 void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	if (firstMouse)
