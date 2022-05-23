@@ -31,6 +31,7 @@ void DoMovement();
 void animacionPelota();
 void animacionGarage();
 void animacionPerro();
+void animacionPuerta();
 
 
 // Window dimensions
@@ -65,6 +66,11 @@ float posPerro = 0.0f;
 float rotPerro = 0.0f;
 bool animPerro = false;
 
+float rotPerilla = 0.0f;
+float traslacionPerilla = 0.0f;
+float rotacionPerilla = 0.0f;
+
+
 //Variables de estado para las animaciones
 bool estadoPelota1 = true;
 bool estadoPelota2 = false;
@@ -81,9 +87,22 @@ bool estadoPerro1 = true;
 bool estadoPerro2 = false;
 bool estadoPerro3 = false;
 
+bool estadoPuerta1 = true;
+bool estadoPuerta2 = false;
+bool estadoPuerta3 = false;
+
+
+//Variables de control de las luces
+bool horaDia = true;
+bool luzNoche = false;
+bool luzVentilador = false;
+
+int posMax = 6;
+int contRebotes = 0;
+
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
-	glm::vec3(0.0f,0.0f, 0.0f),
+	glm::vec3(17.0f, 3.2f, -15.5f),
 	glm::vec3(0.0f,0.0f, -8.0f),
 	glm::vec3(8.0f,0.0f,  -8.0f),
 	glm::vec3(8.0f,0.0f, 0.0f)
@@ -140,7 +159,12 @@ glm::vec3 Light2 = glm::vec3(0);
 glm::vec3 Light3 = glm::vec3(0);
 glm::vec3 Light4 = glm::vec3(0);
 
-glm::vec3 LightPosition = glm::vec3(4.0, 4.0, -4.0);
+glm::vec3 dirLightColor = glm::vec3(0.5,0.5,0.5);
+glm::vec3 nightLightColor = glm::vec3(0.0, 0.0, 0.0);
+glm::vec3 ventiladorLightColor = glm::vec3(0.0, 0.0, 0.0);
+
+
+glm::vec3 LightPosition = glm::vec3(7.0, 5.0, 0.0);
 glm::vec3 LightDirection = glm::vec3(0.0, -1.0, 0.0);
 
 
@@ -217,6 +241,11 @@ int main()
 	Model Carroseria((char*)"Models/Car/Carroseria.obj");
 	Model LLanta((char*)"Models/Car/Wheel.obj");
 	Model Perro((char*)"Models/Dog/Doguinho.obj");
+	Model Foco((char*)"Models/Foco/Foco.obj");
+	Model PerillaBase((char*)"Models/Fachada/PerillaBase.obj");
+	Model Perilla((char*)"Models/Fachada/Perilla.obj");
+
+
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -254,6 +283,7 @@ int main()
 		animacionPelota();
 		animacionGarage();
 		animacionPerro();
+		animacionPuerta();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -271,9 +301,21 @@ int main()
 
 
 		// Directional light
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+		/*glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.5f, 0.5f, 0.5f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 1.0f, 1.0f, 1.0f);*/
+
+		//// Directional light
+		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.211f, 0.156f, 0.384f);
+		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.211f, 0.156f, 0.384f);
+		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 1.0f, 1.0f, 1.0f);
+
+		// Directional light
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), dirLightColor.x, dirLightColor.y, dirLightColor.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), dirLightColor.x, dirLightColor.y, dirLightColor.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 1.0f, 1.0f, 1.0f);
 
 
@@ -303,9 +345,9 @@ int main()
 
 
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].ambient"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].diffuse"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].ambient"), nightLightColor.x, nightLightColor.y, nightLightColor.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].diffuse"), nightLightColor.x, nightLightColor.y, nightLightColor.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].specular"), 0.5f, 0.5f, 0.5f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].linear"), 0.22f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].quadratic"), 0.20f);
@@ -340,14 +382,14 @@ int main()
 		// SpotLight
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), LightPosition.x, LightPosition.y, LightPosition.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.direction"), LightDirection.x, LightDirection.y, LightDirection.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"), 0.0f, 0.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.constant"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.35f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.44f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), ventiladorLightColor.x, ventiladorLightColor.y, ventiladorLightColor.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), ventiladorLightColor.x, ventiladorLightColor.y, ventiladorLightColor.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.14f);
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.07f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(30.0f)));
 
 		// Set material properties
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 32.0f);
@@ -542,6 +584,38 @@ int main()
 		Perro.Draw(lightingShader);
 
 
+		//Carga de modelo de Foco
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(17.0f, 3.0f, -15.5f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Foco.Draw(lightingShader);
+
+		//Carga de modelo de PerillaBase
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(9.5f, 3.8f, 15.3f));
+		
+		model = glm::rotate(model, glm::radians(-rotacionPerilla), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(traslacionPerilla-0.1, 0.0f, traslacionPerilla));
+		
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PerillaBase.Draw(lightingShader);
+
+		//Carga de modelo de Perilla
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(9.5f, 3.8f, 15.3f));
+		model = glm::rotate(model, glm::radians(-rotPerilla), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		model = glm::rotate(model, glm::radians(-rotacionPerilla), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(traslacionPerilla-0.1, 0.0f, traslacionPerilla));
+		
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Perilla.Draw(lightingShader);
+
 
 
 		glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
@@ -628,15 +702,11 @@ void DoMovement()
 
 
 	}
-
-	if (animPuerta) {
-		if (rotPuertaPrincipal < 90) {
-			rotPuertaPrincipal += 0.5f;
-		}
-	}
 	
 	if (keys[GLFW_KEY_B]) {
 		animPelota = true;
+		posMax = 6;
+		contRebotes = 0;
 	}
 
 	if (keys[GLFW_KEY_G]) {
@@ -647,21 +717,73 @@ void DoMovement()
 		animPerro = true;
 	}
 
+	if (keys[GLFW_KEY_P]) {
+		animPuerta = true;
+	}
+
 	if (animVentilador) {
 		rotVentilador += 1.0f;
+		if (rotVentilador < 90) {
+			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
+		}
+		if (rotVentilador > 90 && rotVentilador < 180) {
+			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+		if (rotVentilador > 180 && rotVentilador < 270) {
+			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
+		}
+
 		if (rotVentilador > 360) {
 			rotVentilador = 0.0f;
 			animVentilador = false;
+			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
 		}		
 	}
 }
 
+void animacionPuerta() {
+	if (animPuerta) {
+		if (estadoPuerta1) {
+			rotPerilla += 0.5f;
+			if (rotPerilla > 45) {
+				estadoPuerta1 = false;
+				estadoPuerta2 = true;
+			}
+		}
+		if (estadoPuerta2) {
+			rotPerilla -= 0.5f;
+			if (rotPerilla < 0) {
+				estadoPuerta2 = false;
+				estadoPuerta3 = true;
+			}
+		}
+		if (estadoPuerta3) {
+			rotPuertaPrincipal += 0.88f;
+			
+			if (rotacionPerilla < 90) {
+				traslacionPerilla += 0.026f;
+				rotacionPerilla += 1.0f;
+			}
+			if (rotPuertaPrincipal > 80) {
+				estadoPuerta3 = false;
+				animPuerta = false;
+			}
+		}
+	}
+
+	
+	
+
+	
+}
+
 //La función realiza la lógica de la animación de la pelota
 void animacionPelota() {
+	
 	if (animPelota) {//Si se activa la animación
 		if (estadoPelota1) {//Estado1 Mover pelota hacia arriba
 			posPelota += 0.1f;
-			if (posPelota >  6) {//Cambiar de estado
+			if (posPelota >  posMax) {//Cambiar de estado
 				estadoPelota1 = false;
 				estadoPelota2 = true;
 			}
@@ -680,7 +802,28 @@ void animacionPelota() {
 			if (escalaPelota < 0.2 ) {//Cambio de estado
 				estadoPelota3 = false;
 				estadoPelota4 = true;
+
+				contRebotes++;
+				if (contRebotes == 1) {
+					posMax = 5;
+				}
+				else if (contRebotes == 2) {
+					posMax = 4;
+				}
+				else if (contRebotes == 3) {
+					posMax = 3;
+				}
+				else if (contRebotes == 4) {
+					posMax = 2;
+				}
+				else if (contRebotes == 5) {
+					posMax = 1;
+				}
+				else if (contRebotes == 6) {
+					posMax = 0;
+				}
 			}
+			
 		}
 		if (estadoPelota4) {//Estado4 Mover pelota hacia arriba
 			posPelota += 0.1f;
@@ -688,10 +831,19 @@ void animacionPelota() {
 				escalaPelota += 0.1f;
 
 			}
-			if (posPelota > 6) {//Cambiar de estado
+			else {
+				if (posMax == 0) {
+					estadoPelota2 = false;
+					estadoPelota1 = true;
+					animPelota = false;
+					return;
+				}
+			}
+			if (posPelota > posMax && posMax != 0) {//Cambiar de estado
 				estadoPelota4 = false;
 				estadoPelota2 = true;
 			}
+			
 		}
 
 	}
@@ -794,12 +946,42 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		}
 	}
 
-	if (keys[GLFW_KEY_P]) {
-		animPuerta = true;
-	}
-
 	if (keys[GLFW_KEY_V]) {
 		animVentilador = true;
+	}
+
+	if (keys[GLFW_KEY_N]) {
+		horaDia = !horaDia;
+		if (!horaDia) {
+			dirLightColor = glm::vec3(0.211f, 0.156f, 0.384f);
+		}
+		else {
+			dirLightColor = glm::vec3(0.5f, 0.5f, 0.5f);
+		}
+	}
+
+	if (keys[GLFW_KEY_L]) {
+		luzNoche = !luzNoche;
+		
+		if (!luzNoche) {
+			nightLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+		else {
+			nightLightColor = glm::vec3(1.0f, 0.643f, 0.273f);
+		}
+
+	}
+
+	if (keys[GLFW_KEY_C]) {
+		luzVentilador = !luzVentilador;
+
+		if (!luzVentilador) {
+			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+		else {
+			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
+		}
+
 	}
 
 	
