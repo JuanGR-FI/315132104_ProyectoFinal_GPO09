@@ -1,5 +1,9 @@
 #include <iostream>
 #include <cmath>
+#include <irrKlang.h>
+using namespace irrklang;
+
+#pragma comment(lib, "irrKlang.lib")
 
 
 // GLEW
@@ -32,6 +36,7 @@ void animacionPelota();
 void animacionGarage();
 void animacionPerro();
 void animacionPuerta();
+int musicaFondo();
 
 
 // Window dimensions
@@ -66,6 +71,10 @@ float posPerro = 0.0f;
 float rotPerro = 0.0f;
 bool animPerro = false;
 
+float rotPrimerPar = 0.0f;
+float rotSegundoPar = 0.0f;
+
+
 float rotPerilla = 0.0f;
 float traslacionPerilla = 0.0f;
 float rotacionPerilla = 0.0f;
@@ -99,6 +108,9 @@ bool luzVentilador = false;
 
 int posMax = 6;
 int contRebotes = 0;
+
+//Variable para control de la musica de fondo
+bool soundOn = false;
 
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -174,6 +186,15 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 int main()
 {
+	//////////////
+	
+
+
+
+	////////////
+
+
+
 	// Init GLFW
 	glfwInit();
 	// Set all the required options for GLFW
@@ -241,10 +262,15 @@ int main()
 	Model Carroseria((char*)"Models/Car/Carroseria.obj");
 	Model LLanta((char*)"Models/Car/Wheel.obj");
 	Model Perro((char*)"Models/Dog/Doguinho.obj");
+	Model PataDelanteraIzq((char*)"Models/Dog/PataDelanteraIzq.obj");
+	Model PataDelanteraDer((char*)"Models/Dog/PataDelanteraDer.obj");
+	Model PataTraseraIzq((char*)"Models/Dog/PataTraseraIzq.obj");
+	Model PataTraseraDer((char*)"Models/Dog/PataTraseraDer.obj");
+
 	Model Foco((char*)"Models/Foco/Foco.obj");
 	Model PerillaBase((char*)"Models/Fachada/PerillaBase.obj");
 	Model Perilla((char*)"Models/Fachada/Perilla.obj");
-
+	Model Poster((char*)"Models/Poster/Poster.obj");
 
 
 	// First, set the container's VAO (and VBO)
@@ -284,6 +310,7 @@ int main()
 		animacionGarage();
 		animacionPerro();
 		animacionPuerta();
+		musicaFondo();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -576,13 +603,51 @@ int main()
 
 		//Carga de modelo de Perro
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(30.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(30.0f, 1.7f, 0.0f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
 		model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Perro.Draw(lightingShader);
 
+		//Carga de modelo de PataDelanteraIzq
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(30.3f, 1.0f, 0.8f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
+		model = glm::rotate(model, glm::radians(-rotPrimerPar), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PataDelanteraIzq.Draw(lightingShader);
+
+		//Carga de modelo de PataDelanteraDer
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(29.7f, 1.0f, 0.8f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
+		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(rotSegundoPar), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PataDelanteraDer.Draw(lightingShader);
+
+		//Carga de modelo de PataTraseraIzq
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(30.3f, 1.2f, -1.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
+		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(rotSegundoPar), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PataTraseraIzq.Draw(lightingShader);
+
+		//Carga de modelo de PataTraseraDer
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(29.7f, 1.2f, -1.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
+		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-rotPrimerPar), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		PataTraseraDer.Draw(lightingShader);
 
 		//Carga de modelo de Foco
 		model = glm::mat4(1);
@@ -615,6 +680,13 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
 		Perilla.Draw(lightingShader);
+
+		//Carga de modelo de Poster
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(-8.0f, 8.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
+		Poster.Draw(lightingShader);
 
 
 
@@ -898,31 +970,61 @@ void animacionPerro() {
 	if (animPerro) { //Si se activa la animación
 		if (estadoPerro1) {//Estado1 Mover al perro hacia adelante
 			posPerro += 0.1f;
-			if (posPerro > 20) {//Cambiar al siguiente estado
+			rotPrimerPar += 0.5f;
+			rotSegundoPar += 0.5f;
+			if (rotPrimerPar > 30) {
 				estadoPerro1 = false;
 				estadoPerro2 = true;
-				
 			}
+			//if (posPerro > 20) {//Cambiar al siguiente estado
+			//	estadoPerro1 = false;
+			//	estadoPerro2 = true;
+			//	
+			//}
 		}
-		if (estadoPerro2) {//Estado2 Rotar al perro para ver en sentido contrario y seguir moviéndose
-			rotPerro = 180.0f;
-			
-			posPerro -= 0.1f;
-			if (posPerro < 0) {//Cambio de estado
+		if (estadoPerro2) {
+			posPerro += 0.1f;
+			rotPrimerPar -= 0.5f;
+			rotSegundoPar -= 0.5f;
+			if (rotPrimerPar < 0) {
 				estadoPerro2 = false;
 				estadoPerro3 = true;
-
 			}
 		}
-
-		if (estadoPerro3) {//Estado3 Colocar al perro en la posisción inicial
-			rotPerro = 0.0f;
-			posPerro = 0.0f;
-			estadoPerro3 = false;
-			estadoPerro1 = true;
-			animPerro = false;
-
+		if (estadoPerro3) {
+			posPerro += 0.1f;
+			rotPrimerPar -= 0.5f;
+			rotSegundoPar -= 0.5f;
+			if (rotPrimerPar < -30) {
+				estadoPerro3 = false;
+				estadoPerro1 = true;
+			}
+			if (posPerro > 42) {
+				estadoPerro3 = false;
+				estadoPerro1 = false;
+				animPerro = false;
+			}
+		
 		}
+		//if (estadoPerro2) {//Estado2 Rotar al perro para ver en sentido contrario y seguir moviéndose
+		//	rotPerro = 180.0f;
+		//	
+		//	posPerro -= 0.1f;
+		//	if (posPerro < 0) {//Cambio de estado
+		//		estadoPerro2 = false;
+		//		estadoPerro3 = true;
+
+		//	}
+		//}
+
+		//if (estadoPerro3) {//Estado3 Colocar al perro en la posisción inicial
+		//	rotPerro = 0.0f;
+		//	posPerro = 0.0f;
+		//	estadoPerro3 = false;
+		//	estadoPerro1 = true;
+		//	animPerro = false;
+
+		//}
 	}
 }
 
@@ -948,6 +1050,10 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 
 	if (keys[GLFW_KEY_V]) {
 		animVentilador = true;
+	}
+
+	if (keys[GLFW_KEY_0]) {
+		soundOn = true;
 	}
 
 	if (keys[GLFW_KEY_N]) {
@@ -1004,4 +1110,29 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	lastY = yPos;
 
 	camera.ProcessMouseMovement(xOffset, yOffset);
+}
+
+int musicaFondo() {
+	if (soundOn) {
+		soundOn = false;
+		// start the sound engine with default parameters
+		ISoundEngine* engine = createIrrKlangDevice();
+
+		if (!engine)
+			return 0; // error starting up the engine
+
+		  // play some sound stream, looped
+		engine->play2D("Media/MonstersIncTheme.ogg", false);
+
+		//char i = 0;
+		//std::cin >> i; // wait for user to press some key
+
+		//engine->drop(); // delete engine
+		return 0;
+	}
+	
+	
+	
+
+
 }

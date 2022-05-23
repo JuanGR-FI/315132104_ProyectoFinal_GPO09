@@ -1,13 +1,16 @@
-newmtl initialShadingGroup
+newmtl Doguinho_doguinho_texture
 illum 4
-Kd 0.50 0.50 0.50
-Ka 0.00 0.00 0.00
+Kd 0.00 0.00 0.00
+Ka 1.00 1.00 1.00
 Tf 1.00 1.00 1.00
-Ni 1.00
-newmtl lambert8SG
+map_Kd Doguinho_low_poly_doguinho_uv_BaseColor.png
+Ni 1.45
+Ks 0.20 0.20 0.20
+Ns 225.00
+newmtl lambert9SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd PuertaTextura.tga
+map_Kd Pared.png
 Ni 1.00
