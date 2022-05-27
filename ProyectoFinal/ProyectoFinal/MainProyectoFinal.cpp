@@ -186,15 +186,6 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 int main()
 {
-	//////////////
-	
-
-
-
-	////////////
-
-
-
 	// Init GLFW
 	glfwInit();
 	// Set all the required options for GLFW
@@ -325,19 +316,6 @@ int main()
 		lightingShader.Use();
 		GLint viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
 		glUniform3f(viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-
-
-		// Directional light
-		/*glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 1.0f, 1.0f, 1.0f);*/
-
-		//// Directional light
-		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.211f, 0.156f, 0.384f);
-		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.211f, 0.156f, 0.384f);
-		//glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 1.0f, 1.0f, 1.0f);
 
 		// Directional light
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
@@ -623,7 +601,6 @@ int main()
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(29.7f, 1.0f, 0.8f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
-		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(rotSegundoPar), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
@@ -633,7 +610,6 @@ int main()
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(30.3f, 1.2f, -1.0f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
-		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(rotSegundoPar), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
@@ -643,7 +619,6 @@ int main()
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(29.7f, 1.2f, -1.0f));
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, posPerro));
-		//model = glm::rotate(model, glm::radians(-rotPerro), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(-rotPrimerPar), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "activaTransparencia"), 0);
@@ -692,10 +667,6 @@ int main()
 
 		glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		
-
-
 
 		glDisable(GL_BLEND);  //Desactiva el canal alfa 
 		glUniform4f(glGetUniformLocation(lightingShader.Program, "colorAlpha"), 1.0, 1.0, 1.0, 1.0);
@@ -775,37 +746,38 @@ void DoMovement()
 
 	}
 	
-	if (keys[GLFW_KEY_B]) {
+	if (keys[GLFW_KEY_B]) {//Si se presiona la tecla B
+		//Se inicializan los valores de la pelota y se activa la animación
 		animPelota = true;
 		posMax = 6;
 		contRebotes = 0;
 	}
 
-	if (keys[GLFW_KEY_G]) {
-		animGarage = true;
+	if (keys[GLFW_KEY_G]) {//Si se presiona la tecla G
+		animGarage = true;//Activa la animación del garage
 	}
 
-	if (keys[GLFW_KEY_T]) {
-		animPerro = true;
+	if (keys[GLFW_KEY_T]) {//Si se presiona la tecla T
+		animPerro = true;//Activa la animación del perro
 	}
 
-	if (keys[GLFW_KEY_P]) {
-		animPuerta = true;
+	if (keys[GLFW_KEY_P]) {//Si se presiona la tecla P
+		animPuerta = true;//Activa la animación de la puerta
 	}
 
-	if (animVentilador) {
+	if (animVentilador) {//Realizar la animación del ventilador
 		rotVentilador += 1.0f;
-		if (rotVentilador < 90) {
+		if (rotVentilador < 90) {//Enciende la luz
 			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
 		}
-		if (rotVentilador > 90 && rotVentilador < 180) {
+		if (rotVentilador > 90 && rotVentilador < 180) {//Apaga la luz
 			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
-		if (rotVentilador > 180 && rotVentilador < 270) {
+		if (rotVentilador > 180 && rotVentilador < 270) {//Enciende la luz
 			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
 		}
 
-		if (rotVentilador > 360) {
+		if (rotVentilador > 360) {//Si ya dió una vuelta completa apaga la luz y termina la animación
 			rotVentilador = 0.0f;
 			animVentilador = false;
 			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -813,40 +785,37 @@ void DoMovement()
 	}
 }
 
+//La función realizará la lógica de la animación
 void animacionPuerta() {
-	if (animPuerta) {
-		if (estadoPuerta1) {
+	if (animPuerta) {//Si se activó la animación
+		if (estadoPuerta1) {//Estado1 Rotar perilla hacia abajo
 			rotPerilla += 0.5f;
-			if (rotPerilla > 45) {
+			if (rotPerilla > 45) {//Cambio de estado
 				estadoPuerta1 = false;
 				estadoPuerta2 = true;
 			}
 		}
-		if (estadoPuerta2) {
+		if (estadoPuerta2) {//Estado2 Se rota la perilla a su posición original
 			rotPerilla -= 0.5f;
-			if (rotPerilla < 0) {
+			if (rotPerilla < 0) {//Cambio de estado
 				estadoPuerta2 = false;
 				estadoPuerta3 = true;
 			}
 		}
-		if (estadoPuerta3) {
+		if (estadoPuerta3) {//Estado3 Se comienza a rotar la puerta hacia afuera
 			rotPuertaPrincipal += 0.88f;
 			
-			if (rotacionPerilla < 90) {
+			if (rotacionPerilla < 90) {//Movimiento para que la perilla se mueva con la puerta
 				traslacionPerilla += 0.026f;
 				rotacionPerilla += 1.0f;
 			}
-			if (rotPuertaPrincipal > 80) {
+			if (rotPuertaPrincipal > 80) {//Movimiento de la puerta
 				estadoPuerta3 = false;
 				animPuerta = false;
 			}
 		}
 	}
 
-	
-	
-
-	
 }
 
 //La función realiza la lógica de la animación de la pelota
@@ -876,6 +845,7 @@ void animacionPelota() {
 				estadoPelota4 = true;
 
 				contRebotes++;
+				//Se va modificando la altura máxima de la pelota
 				if (contRebotes == 1) {
 					posMax = 5;
 				}
@@ -904,7 +874,7 @@ void animacionPelota() {
 
 			}
 			else {
-				if (posMax == 0) {
+				if (posMax == 0) {//Si ya llegó al piso, terminamos la animación
 					estadoPelota2 = false;
 					estadoPelota1 = true;
 					animPelota = false;
@@ -968,63 +938,41 @@ void animacionGarage() {
 void animacionPerro() {
 
 	if (animPerro) { //Si se activa la animación
-		if (estadoPerro1) {//Estado1 Mover al perro hacia adelante
+		if (estadoPerro1) {//Estado1 Mover al perro hacia adelante y se rotan las patas
 			posPerro += 0.1f;
 			rotPrimerPar += 0.5f;
 			rotSegundoPar += 0.5f;
-			if (rotPrimerPar > 30) {
+			if (rotPrimerPar > 30) {//Cambio de estado
 				estadoPerro1 = false;
 				estadoPerro2 = true;
 			}
-			//if (posPerro > 20) {//Cambiar al siguiente estado
-			//	estadoPerro1 = false;
-			//	estadoPerro2 = true;
-			//	
-			//}
+			
 		}
-		if (estadoPerro2) {
+		if (estadoPerro2) {//Estado2 Se sigue moviendo el perro hacia adelante y se rotan las patas de manera inversa
 			posPerro += 0.1f;
 			rotPrimerPar -= 0.5f;
 			rotSegundoPar -= 0.5f;
-			if (rotPrimerPar < 0) {
+			if (rotPrimerPar < 0) {//Cambio de estado
 				estadoPerro2 = false;
 				estadoPerro3 = true;
 			}
 		}
-		if (estadoPerro3) {
+		if (estadoPerro3) {//Estado3 Se sigue moviendo el perro hacia adelante y se rotan las patas
 			posPerro += 0.1f;
 			rotPrimerPar -= 0.5f;
 			rotSegundoPar -= 0.5f;
-			if (rotPrimerPar < -30) {
+			if (rotPrimerPar < -30) {//Volver al estado 1 para continuar con el movimiento
 				estadoPerro3 = false;
 				estadoPerro1 = true;
 			}
-			if (posPerro > 42) {
+			if (posPerro > 42) {//Si ya llegamos al final, detener animación
 				estadoPerro3 = false;
 				estadoPerro1 = false;
 				animPerro = false;
 			}
 		
 		}
-		//if (estadoPerro2) {//Estado2 Rotar al perro para ver en sentido contrario y seguir moviéndose
-		//	rotPerro = 180.0f;
-		//	
-		//	posPerro -= 0.1f;
-		//	if (posPerro < 0) {//Cambio de estado
-		//		estadoPerro2 = false;
-		//		estadoPerro3 = true;
-
-		//	}
-		//}
-
-		//if (estadoPerro3) {//Estado3 Colocar al perro en la posisción inicial
-		//	rotPerro = 0.0f;
-		//	posPerro = 0.0f;
-		//	estadoPerro3 = false;
-		//	estadoPerro1 = true;
-		//	animPerro = false;
-
-		//}
+		
 	}
 }
 
@@ -1048,43 +996,43 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		}
 	}
 
-	if (keys[GLFW_KEY_V]) {
-		animVentilador = true;
+	if (keys[GLFW_KEY_V]) {//Si se presiona la tecla V
+		animVentilador = true; //Se modifica la variable que activa la animacion del ventilador
 	}
 
-	if (keys[GLFW_KEY_0]) {
-		soundOn = true;
+	if (keys[GLFW_KEY_0]) {//Si se presiona la tecla 0
+		soundOn = true; //Se modifica la variable que activa la reproducción del sonido de fondo
 	}
 
-	if (keys[GLFW_KEY_N]) {
-		horaDia = !horaDia;
-		if (!horaDia) {
+	if (keys[GLFW_KEY_N]) {//Si se presiona la tecla N
+		horaDia = !horaDia; //Se modifica la variable que controla la luz del día
+		if (!horaDia) {//Se coloca un color de luz violeta oscuro
 			dirLightColor = glm::vec3(0.211f, 0.156f, 0.384f);
 		}
-		else {
+		else {//Se coloca un color de luz blanca
 			dirLightColor = glm::vec3(0.5f, 0.5f, 0.5f);
 		}
 	}
 
-	if (keys[GLFW_KEY_L]) {
-		luzNoche = !luzNoche;
+	if (keys[GLFW_KEY_L]) {//Si se presiona la tecla L
+		luzNoche = !luzNoche; //Se modifica la variable que controla la luz del foco de noche
 		
-		if (!luzNoche) {
+		if (!luzNoche) {//Apaga la luz
 			nightLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
-		else {
+		else {//Enciende la luz
 			nightLightColor = glm::vec3(1.0f, 0.643f, 0.273f);
 		}
 
 	}
 
-	if (keys[GLFW_KEY_C]) {
-		luzVentilador = !luzVentilador;
+	if (keys[GLFW_KEY_C]) { //En caso de que se presione la tecla C
+		luzVentilador = !luzVentilador; //Se modifica la variable que controla la luz del ventilador
 
-		if (!luzVentilador) {
+		if (!luzVentilador) {//Apaga la luz
 			ventiladorLightColor = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
-		else {
+		else {//Enciende la luz
 			ventiladorLightColor = glm::vec3(0.941f, 0.768f, 0.058f);
 		}
 
@@ -1112,6 +1060,7 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
+//La función realiza todo el funcionamiento para poder escuchar el sonido de fondo
 int musicaFondo() {
 	if (soundOn) {
 		soundOn = false;
@@ -1122,17 +1071,9 @@ int musicaFondo() {
 			return 0; // error starting up the engine
 
 		  // play some sound stream, looped
-		engine->play2D("Media/MonstersIncTheme.ogg", false);
+		engine->play2D("Media/MonstersIncTheme.ogg", true);
 
-		//char i = 0;
-		//std::cin >> i; // wait for user to press some key
-
-		//engine->drop(); // delete engine
 		return 0;
 	}
 	
-	
-	
-
-
 }
